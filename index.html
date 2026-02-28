@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Sueñitos 🌙</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFF8F5;
+    --bg2: #FFF0E8;
+    --card: #FFFFFF;
+    --text: #3D2B1F;
+    --text2: #7A5C50;
+    --accent: #FF8C69;
+    --accent2: #FFB347;
+    --accent3: #87CEEB;
+    --night: #7B68EE;
+    --day: #FFB347;
+    --success: #98D8AA;
+    --border: rgba(255,140,105,0.2);
+    --shadow: rgba(255,140,105,0.15);
+    --radius: 24px;
+    --radius-sm: 14px;
+  }
+  [data-theme="dark"] {
+    --bg: #1A1025;
+    --bg2: #231535;
+    --card: #2D1F42;
+    --text: #F5E6FF;
+    --text2: #B89EC9;
+    --accent: #C084FC;
+    --accent2: #818CF8;
+    --accent3: #67E8F9;
+    --border: rgba(192,132,252,0.2);
+    --shadow: rgba(192,132,252,0.15);
+  }
+  [data-theme-color="ocean"] {
+    --accent: #38BDF8;
+    --accent2: #7DD3FC;
+    --accent3: #BAE6FD;
+  }
+  [data-theme-color="mint"] {
+    --accent: #34D399;
+    --accent2: #6EE7B7;
+    --accent3: #A7F3D0;
+  }
+  [data-theme-color="lavender"] {
+    --accent: #A78BFA;
+    --accent2: #C4B5FD;
+    --accent3: #DDD6FE;
+  }
+  [data-theme-color="rose"] {
+    --accent: #FB7185;
+    --accent2: #FCA5A5;
+    --accent3: #FECDD3;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background 0.4s, color 0.4s;
+  }
+
+  /* ───────── STARS BACKGROUND ───────── */
+  .stars {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; opacity: 0;
+    transition: opacity 0.5s;
+  }
+  [data-theme="dark"] .stars { opacity: 1; }
+  .star {
+    position: absolute; border-radius: 50%;
+    background: white; animation: twinkle 3s infinite alternate;
+  }
+
+  @keyframes twinkle { 0% { opacity: 0.2; transform: scale(1); } 100% { opacity: 1; transform: scale(1.3); } }
+  @keyframes float { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
+  @keyframes pulse-ring { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(1.8); opacity: 0; } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pop { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+  @keyframes zzz { 0% { opacity: 0; transform: translateY(0) scale(0.5); } 50% { opacity: 1; } 100% { opacity: 0; transform: translateY(-40px) scale(1); } }
+
+  /* ───────── LAYOUT ───────── */
+  #app { position: relative; z-index: 1; max-width: 430px; margin: 0 auto; padding-bottom: 90px; }
+
+  /* ───────── NAV ───────── */
+  .nav {
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 430px; background: var(--card);
+    border-top: 1px solid var(--border); display: flex; z-index: 100;
+    padding: 8px 0 12px; box-shadow: 0 -4px 20px var(--shadow);
+    backdrop-filter: blur(10px);
+  }
+  .nav-btn {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+    background: none; border: none; color: var(--text2); cursor: pointer;
+    font-family: 'Nunito', sans-serif; font-size: 10px; font-weight: 700;
+    padding: 4px 0; transition: all 0.2s; letter-spacing: 0.3px;
+  }
+  .nav-btn.active { color: var(--accent); }
+  .nav-btn .icon { font-size: 22px; line-height: 1; }
+  .nav-btn.active .icon { animation: pop 0.3s ease; }
+
+  /* ───────── HEADER ───────── */
+  .header {
+    padding: 20px 20px 0;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .header-title { font-family: 'Pacifico', cursive; font-size: 22px; color: var(--accent); }
+  .settings-btn {
+    background: var(--card); border: none; width: 42px; height: 42px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 20px; box-shadow: 0 2px 10px var(--shadow);
+    transition: transform 0.2s;
+  }
+  .settings-btn:active { transform: rotate(45deg); }
+
+  /* ───────── BABY CARD ───────── */
+  .baby-card {
+    margin: 16px 20px 0;
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 24px 20px;
+    box-shadow: 0 4px 24px var(--shadow);
+    text-align: center;
+    animation: slideUp 0.5s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .baby-card::before {
+    content: '';
+    position: absolute; top: -30px; right: -30px;
+    width: 120px; height: 120px;
+    background: var(--accent); opacity: 0.05; border-radius: 50%;
+  }
+  .baby-photo-wrap {
+    position: relative; display: inline-block; margin-bottom: 12px;
+  }
+  .baby-photo {
+    width: 110px; height: 110px; border-radius: 50%; object-fit: cover;
+    border: 4px solid var(--accent); cursor: pointer;
+    transition: transform 0.3s;
+  }
+  .baby-photo:active { transform: scale(0.95); }
+  .photo-placeholder {
+    width: 110px; height: 110px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px; cursor: pointer; border: 4px solid var(--accent);
+    transition: transform 0.3s;
+  }
+  .photo-placeholder:active { transform: scale(0.95); }
+  .status-badge {
+    position: absolute; bottom: 4px; right: 4px;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--card); border: 2px solid var(--card);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  .baby-name {
+    font-family: 'Pacifico', cursive; font-size: 24px; color: var(--text);
+    margin-bottom: 4px;
+  }
+  .baby-status {
+    font-size: 13px; color: var(--text2); font-weight: 600; letter-spacing: 0.5px;
+  }
+  .zzz-container { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); pointer-events: none; }
+  .zzz { position: absolute; font-size: 18px; animation: zzz 2s infinite; }
+  .zzz:nth-child(2) { animation-delay: 0.7s; left: 15px; font-size: 14px; }
+  .zzz:nth-child(3) { animation-delay: 1.4s; left: -15px; font-size: 12px; }
+
+  /* ───────── TIMER ───────── */
+  .timer-section { margin: 0 20px; }
+  .timer-display {
+    background: var(--card); border-radius: var(--radius);
+    padding: 20px; margin-top: 16px;
+    box-shadow: 0 4px 20px var(--shadow); text-align: center;
+  }
+  .timer-label { font-size: 12px; font-weight: 800; color: var(--text2); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+  .timer-time { font-size: 52px; font-weight: 900; color: var(--accent); line-height: 1; letter-spacing: -2px; }
+  .timer-time.sleeping { color: var(--night); }
+  .timer-sub { font-size: 12px; color: var(--text2); margin-top: 4px; font-weight: 600; }
+
+  .btn-main {
+    display: block; width: 100%; margin-top: 16px; padding: 18px;
+    border: none; border-radius: var(--radius); cursor: pointer;
+    font-family: 'Nunito', sans-serif; font-size: 18px; font-weight: 900;
+    letter-spacing: 0.5px; transition: all 0.2s; position: relative; overflow: hidden;
+  }
+  .btn-start {
+    background: linear-gradient(135deg, var(--night) 0%, #9B6ADE 100%);
+    color: white; box-shadow: 0 6px 20px rgba(123,104,238,0.4);
+  }
+  .btn-stop {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    color: white; box-shadow: 0 6px 20px rgba(255,140,105,0.4);
+  }
+  .btn-main:active { transform: scale(0.97); }
+  .btn-pulse { animation: pop 1.5s infinite; }
+
+  /* RING ANIMATION */
+  .ring-wrap { position: relative; display: inline-block; }
+  .ring {
+    position: absolute; inset: -12px; border-radius: 50%;
+    border: 3px solid var(--night); animation: pulse-ring 2s infinite;
+    pointer-events: none;
+  }
+
+  /* ───────── TODAY STATS ───────── */
+  .section { margin: 16px 20px 0; animation: slideUp 0.4s ease; }
+  .section-title {
+    font-size: 13px; font-weight: 800; color: var(--text2);
+    letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px;
+  }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat-card {
+    background: var(--card); border-radius: var(--radius-sm);
+    padding: 16px 14px; box-shadow: 0 2px 12px var(--shadow);
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .stat-icon { font-size: 22px; }
+  .stat-value { font-size: 20px; font-weight: 900; color: var(--text); }
+  .stat-label { font-size: 11px; font-weight: 700; color: var(--text2); letter-spacing: 0.5px; }
+  .stat-card.night-card { background: linear-gradient(135deg, rgba(123,104,238,0.1), rgba(123,104,238,0.05)); border: 1px solid rgba(123,104,238,0.15); }
+  .stat-card.day-card { background: linear-gradient(135deg, rgba(255,179,71,0.1), rgba(255,179,71,0.05)); border: 1px solid rgba(255,179,71,0.15); }
+
+  /* ───────── SLEEP LIST ───────── */
+  .sleep-item {
+    background: var(--card); border-radius: var(--radius-sm);
+    padding: 14px 16px; margin-bottom: 10px;
+    box-shadow: 0 2px 10px var(--shadow);
+    display: flex; align-items: center; gap: 12px;
+    animation: slideUp 0.3s ease;
+  }
+  .sleep-icon { font-size: 24px; min-width: 36px; text-align: center; }
+  .sleep-info { flex: 1; }
+  .sleep-time { font-size: 13px; color: var(--text2); font-weight: 700; }
+  .sleep-duration { font-size: 17px; font-weight: 900; color: var(--text); }
+  .sleep-tag {
+    font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 20px;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .tag-night { background: rgba(123,104,238,0.15); color: var(--night); }
+  .tag-day { background: rgba(255,179,71,0.15); color: #D4831A; }
+  [data-theme="dark"] .tag-day { color: var(--accent2); }
+
+  .sleep-actions { display: flex; gap: 8px; }
+  .action-btn {
+    background: var(--bg2); border: none; width: 32px; height: 32px;
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 14px; transition: transform 0.2s;
+  }
+  .action-btn:active { transform: scale(0.9); }
+
+  /* ───────── MODAL ───────── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    z-index: 200; display: flex; align-items: flex-end;
+    backdrop-filter: blur(4px); opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--card); border-radius: var(--radius) var(--radius) 0 0;
+    width: 100%; max-width: 430px; margin: 0 auto;
+    padding: 28px 24px 40px; transform: translateY(100%); transition: transform 0.3s;
+    max-height: 85vh; overflow-y: auto;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-handle {
+    width: 40px; height: 4px; background: var(--border);
+    border-radius: 2px; margin: 0 auto 20px;
+  }
+  .modal-title {
+    font-family: 'Pacifico', cursive; font-size: 22px; color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  /* Form */
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 12px; font-weight: 800; color: var(--text2); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 6px; display: block; }
+  .form-input {
+    width: 100%; padding: 14px 16px; background: var(--bg2);
+    border: 2px solid transparent; border-radius: var(--radius-sm);
+    font-family: 'Nunito', sans-serif; font-size: 16px; color: var(--text);
+    outline: none; transition: border-color 0.2s;
+  }
+  .form-input:focus { border-color: var(--accent); }
+  .btn-sm {
+    padding: 12px 20px; border: none; border-radius: var(--radius-sm);
+    font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 800;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-danger { background: #FCA5A5; color: #991B1B; }
+  .btn-secondary { background: var(--bg2); color: var(--text); }
+  .btn-full { display: block; width: 100%; margin-top: 8px; }
+  .btn-sm:active { transform: scale(0.97); }
+
+  /* ───────── SETTINGS ───────── */
+  .settings-section { margin-bottom: 24px; }
+  .settings-title { font-size: 13px; font-weight: 800; color: var(--text2); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; }
+  .setting-row {
+    background: var(--card); border-radius: var(--radius-sm);
+    padding: 14px 16px; margin-bottom: 8px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 2px 8px var(--shadow); cursor: pointer;
+  }
+  .setting-row-left { display: flex; align-items: center; gap: 12px; }
+  .setting-icon { font-size: 22px; width: 36px; text-align: center; }
+  .setting-name { font-size: 15px; font-weight: 700; color: var(--text); }
+  .setting-desc { font-size: 12px; color: var(--text2); margin-top: 1px; }
+
+  /* Toggle */
+  .toggle {
+    width: 50px; height: 28px; background: var(--bg2); border-radius: 14px;
+    position: relative; cursor: pointer; transition: background 0.3s; flex-shrink: 0;
+  }
+  .toggle.on { background: var(--accent); }
+  .toggle::after {
+    content: ''; position: absolute; top: 4px; left: 4px;
+    width: 20px; height: 20px; background: white; border-radius: 50%;
+    transition: left 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  .toggle.on::after { left: 26px; }
+
+  /* Color swatches */
+  .color-swatches { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+  .swatch {
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    border: 3px solid transparent; transition: transform 0.2s, border-color 0.2s;
+  }
+  .swatch.active { border-color: var(--text); transform: scale(1.15); }
+  .swatch:active { transform: scale(0.9); }
+
+  /* Photo buttons */
+  .photo-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .photo-btn {
+    background: var(--bg2); border: 2px dashed var(--border);
+    border-radius: var(--radius-sm); padding: 16px 12px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    cursor: pointer; text-align: center;
+  }
+  .photo-btn-icon { font-size: 32px; }
+  .photo-btn-text { font-size: 12px; font-weight: 700; color: var(--text2); }
+  .photo-preview {
+    width: 60px; height: 60px; border-radius: 50%; object-fit: cover;
+    margin: 0 auto 6px; display: block;
+  }
+
+  /* Week chart */
+  .week-chart { display: flex; gap: 6px; align-items: flex-end; height: 80px; }
+  .week-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+  .week-bar-outer { width: 100%; background: var(--bg2); border-radius: 6px; overflow: hidden; flex-shrink: 0; }
+  .week-bar { background: linear-gradient(to top, var(--accent), var(--accent2)); border-radius: 6px; transition: height 0.5s ease; }
+  .week-day { font-size: 10px; font-weight: 800; color: var(--text2); }
+
+  /* Empty state */
+  .empty { text-align: center; padding: 40px 20px; color: var(--text2); }
+  .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-text { font-size: 14px; font-weight: 700; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tab {
+    flex: 1; padding: 10px; background: var(--bg2); border: none;
+    border-radius: var(--radius-sm); font-family: 'Nunito', sans-serif;
+    font-size: 13px; font-weight: 800; color: var(--text2); cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab.active { background: var(--accent); color: white; }
+
+  /* Page sections */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* Badge / chip */
+  .chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--bg2); border-radius: 20px; padding: 4px 10px;
+    font-size: 12px; font-weight: 700; color: var(--text2);
+  }
+
+  /* History item */
+  .history-day {
+    background: var(--card); border-radius: var(--radius-sm);
+    margin-bottom: 10px; overflow: hidden; box-shadow: 0 2px 10px var(--shadow);
+  }
+  .history-day-header {
+    padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer; user-select: none;
+  }
+  .history-day-date { font-size: 14px; font-weight: 800; color: var(--text); }
+  .history-day-total { font-size: 13px; font-weight: 700; color: var(--accent); }
+  .history-day-body { padding: 0 16px 12px; border-top: 1px solid var(--border); display: none; }
+  .history-day-body.open { display: block; }
+
+  .divider { height: 1px; background: var(--border); margin: 8px 0; }
+  .text-center { text-align: center; }
+  .mt-8 { margin-top: 8px; }
+  .mt-16 { margin-top: 16px; }
+
+  /* Toast */
+  .toast {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px);
+    background: var(--text); color: var(--bg); padding: 12px 24px;
+    border-radius: 100px; font-size: 14px; font-weight: 700;
+    z-index: 999; transition: transform 0.3s; white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  input[type="file"] { display: none; }
+  input[type="datetime-local"] { color-scheme: light dark; }
+
+  .progress-bar {
+    height: 8px; background: var(--bg2); border-radius: 4px; overflow: hidden; margin-top: 6px;
+  }
+  .progress-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div id="app">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-title">Sueñitos 🌙</div>
+    <button class="settings-btn" onclick="openSettings()">⚙️</button>
+  </div>
+
+  <!-- PAGE: HOME -->
+  <div class="page active" id="page-home">
+
+    <!-- BABY CARD -->
+    <div class="baby-card" id="babyCard">
+      <div id="zzzContainer" class="zzz-container" style="display:none">
+        <div class="zzz">💤</div>
+        <div class="zzz">💤</div>
+        <div class="zzz">💤</div>
+      </div>
+      <div class="baby-photo-wrap">
+        <div id="babyPhotoWrap" onclick="openPhotoModal()">
+          <img id="babyPhotoAwake" class="baby-photo" src="" alt="bebé" style="display:none">
+          <img id="babyPhotoSleep" class="baby-photo" src="" alt="bebé" style="display:none">
+          <div id="babyPlaceholder" class="photo-placeholder">👶</div>
+        </div>
+        <div class="status-badge" id="statusBadge">😊</div>
+      </div>
+      <div class="baby-name" id="babyNameDisplay">Mi Bebé</div>
+      <div class="baby-status" id="babyStatusText">¡Despierto y activo! 🌞</div>
+    </div>
+
+    <!-- TIMER -->
+    <div class="timer-section">
+      <div class="timer-display">
+        <div class="timer-label" id="timerLabel">Tiempo dormido</div>
+        <div class="timer-time" id="timerDisplay">00:00:00</div>
+        <div class="timer-sub" id="timerSub">Toca el botón para iniciar</div>
+      </div>
+      <button class="btn-main btn-start btn-pulse" id="mainBtn" onclick="toggleSleep()">
+        😴 Inicia sueño
+      </button>
+    </div>
+
+    <!-- TODAY STATS -->
+    <div class="section">
+      <div class="section-title">📊 Hoy</div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">⏱️</div>
+          <div class="stat-value" id="statTotalToday">0h 0m</div>
+          <div class="stat-label">Total hoy</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🔔</div>
+          <div class="stat-value" id="statWakeupsToday">0</div>
+          <div class="stat-label">Despertares</div>
+        </div>
+        <div class="stat-card night-card">
+          <div class="stat-icon">🌙</div>
+          <div class="stat-value" id="statNightToday">0h 0m</div>
+          <div class="stat-label">Sueño nocturno</div>
+        </div>
+        <div class="stat-card day-card">
+          <div class="stat-icon">☀️</div>
+          <div class="stat-value" id="statDayToday">0h 0m</div>
+          <div class="stat-label">Sueño diurno</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TODAY SLEEPS -->
+    <div class="section">
+      <div class="section-title">🛏️ Siestas de hoy</div>
+      <div id="todaySleepList">
+        <div class="empty">
+          <div class="empty-icon">🌛</div>
+          <div class="empty-text">Sin registros hoy todavía</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page-home -->
+
+  <!-- PAGE: STATS -->
+  <div class="page" id="page-stats">
+    <div style="padding: 20px 0 0;">
+      <div class="section-title" style="padding: 0 20px 12px;">📈 Estadísticas</div>
+
+      <div class="section" style="margin-top: 0;">
+        <div class="tabs">
+          <button class="tab active" onclick="setStatTab('week', this)">Esta semana</button>
+          <button class="tab" onclick="setStatTab('month', this)">Este mes</button>
+        </div>
+        <div id="statsContent"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">📅 Semana actual</div>
+        <div style="background: var(--card); border-radius: var(--radius-sm); padding: 16px; box-shadow: 0 2px 12px var(--shadow);">
+          <div class="week-chart" id="weekChart"></div>
+          <div style="display:flex; justify-content:space-between; margin-top:6px;">
+            <span class="chip">🌙 Nocturno</span>
+            <span class="chip">☀️ Diurno</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PAGE: HISTORY -->
+  <div class="page" id="page-history">
+    <div style="padding: 20px 0 0;">
+      <div style="display:flex; justify-content:space-between; align-items:center; padding: 0 20px 12px;">
+        <div class="section-title" style="margin-bottom:0;">📋 Historial</div>
+        <button class="btn-sm btn-primary" onclick="openExportModal()" style="font-size:12px; padding: 8px 14px;">📧 Exportar</button>
+      </div>
+      <div style="padding: 0 20px;" id="historyList"></div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- BOTTOM NAV -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="setPage('home', this)">
+    <span class="icon">🏠</span> Inicio
+  </button>
+  <button class="nav-btn" onclick="setPage('stats', this)">
+    <span class="icon">📈</span> Stats
+  </button>
+  <button class="nav-btn" onclick="setPage('history', this)">
+    <span class="icon">📋</span> Historial
+  </button>
+</nav>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ─── MODAL: EDIT SLEEP ─── -->
+<div class="modal-overlay" id="editModal" onclick="closeModal('editModal')">
+  <div class="modal" onclick="e=>e.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">✏️ Editar sueño</div>
+    <div class="form-group">
+      <label class="form-label">Inicio del sueño</label>
+      <input type="datetime-local" class="form-input" id="editStart">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Fin del sueño</label>
+      <input type="datetime-local" class="form-input" id="editEnd">
+    </div>
+    <div style="display:flex; gap: 10px; margin-top: 8px;">
+      <button class="btn-sm btn-primary" style="flex:1" onclick="saveEdit()">💾 Guardar</button>
+      <button class="btn-sm btn-danger" onclick="deleteEntry()" style="flex:1">🗑️ Eliminar</button>
+    </div>
+    <button class="btn-sm btn-secondary btn-full mt-8" onclick="closeModal('editModal')">Cancelar</button>
+  </div>
+</div>
+
+<!-- ─── MODAL: SETTINGS ─── -->
+<div class="modal-overlay" id="settingsModal" onclick="closeModal('settingsModal')">
+  <div class="modal" onclick="e=>e.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">⚙️ Configuración</div>
+
+    <div class="settings-section">
+      <div class="settings-title">👶 Perfil del bebé</div>
+      <div class="form-group">
+        <label class="form-label">Nombre</label>
+        <input type="text" class="form-input" id="settingName" placeholder="Nombre del bebé" onchange="saveSetting('babyName', this.value)">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fotos del bebé</label>
+        <div class="photo-btns">
+          <div class="photo-btn" onclick="document.getElementById('photoAwakeInput').click()">
+            <img id="previewAwake" class="photo-preview" src="" style="display:none">
+            <div class="photo-btn-icon">😊</div>
+            <div class="photo-btn-text">Despierto</div>
+          </div>
+          <div class="photo-btn" onclick="document.getElementById('photoSleepInput').click()">
+            <img id="previewSleep" class="photo-preview" src="" style="display:none">
+            <div class="photo-btn-icon">😴</div>
+            <div class="photo-btn-text">Dormido</div>
+          </div>
+        </div>
+        <input type="file" id="photoAwakeInput" accept="image/*" onchange="handlePhoto('awake', this)">
+        <input type="file" id="photoSleepInput" accept="image/*" onchange="handlePhoto('sleep', this)">
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-title">🎨 Apariencia</div>
+      <div class="setting-row" onclick="toggleDarkMode()">
+        <div class="setting-row-left">
+          <div class="setting-icon">🌙</div>
+          <div>
+            <div class="setting-name">Modo noche</div>
+            <div class="setting-desc">Tema oscuro con estrellas</div>
+          </div>
+        </div>
+        <div class="toggle" id="darkToggle"></div>
+      </div>
+      <div style="background: var(--card); border-radius: var(--radius-sm); padding: 14px 16px; box-shadow: 0 2px 8px var(--shadow);">
+        <div class="setting-desc" style="margin-bottom:10px; font-weight:700; color:var(--text);">Color del tema</div>
+        <div class="color-swatches">
+          <div class="swatch" data-color="default" style="background: linear-gradient(135deg, #FF8C69, #FFB347)" onclick="setThemeColor('default', this)"></div>
+          <div class="swatch" data-color="ocean" style="background: linear-gradient(135deg, #38BDF8, #7DD3FC)" onclick="setThemeColor('ocean', this)"></div>
+          <div class="swatch" data-color="mint" style="background: linear-gradient(135deg, #34D399, #6EE7B7)" onclick="setThemeColor('mint', this)"></div>
+          <div class="swatch" data-color="lavender" style="background: linear-gradient(135deg, #A78BFA, #C4B5FD)" onclick="setThemeColor('lavender', this)"></div>
+          <div class="swatch" data-color="rose" style="background: linear-gradient(135deg, #FB7185, #FCA5A5)" onclick="setThemeColor('rose', this)"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-title">⏰ Preferencias</div>
+      <div class="form-group">
+        <label class="form-label">Inicio sueño nocturno</label>
+        <input type="time" class="form-input" id="settingNightStart" value="20:00" onchange="saveSetting('nightStart', this.value)">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fin sueño nocturno</label>
+        <input type="time" class="form-input" id="settingNightEnd" value="07:00" onchange="saveSetting('nightEnd', this.value)">
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-title">🔔 Recordatorios</div>
+      <div class="setting-row">
+        <div class="setting-row-left">
+          <div class="setting-icon">⏰</div>
+          <div>
+            <div class="setting-name">Alertar largo despertar</div>
+            <div class="setting-desc">Notificación si lleva mucho tiempo despierto</div>
+          </div>
+        </div>
+        <div class="toggle on" id="alertToggle" onclick="toggleSetting('alertLong', 'alertToggle')"></div>
+      </div>
+    </div>
+
+    <button class="btn-sm btn-secondary btn-full" onclick="closeModal('settingsModal')">Listo ✓</button>
+  </div>
+</div>
+
+<!-- ─── MODAL: EXPORT ─── -->
+<div class="modal-overlay" id="exportModal" onclick="closeModal('exportModal')">
+  <div class="modal" onclick="e=>e.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📧 Exportar historial</div>
+    <div class="form-group">
+      <label class="form-label">Correo electrónico</label>
+      <input type="email" class="form-input" id="exportEmail" placeholder="tu@correo.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Período</label>
+      <select class="form-input" id="exportPeriod">
+        <option value="week">Esta semana</option>
+        <option value="month">Este mes</option>
+        <option value="all">Todo el historial</option>
+      </select>
+    </div>
+    <button class="btn-sm btn-primary btn-full" onclick="exportData()">📨 Generar reporte</button>
+    <p style="font-size:11px; color:var(--text2); text-align:center; margin-top:12px; line-height:1.5;">
+      Se generará un archivo descargable con el historial completo que puedes adjuntar a un correo.
+    </p>
+    <button class="btn-sm btn-secondary btn-full mt-8" onclick="closeModal('exportModal')">Cancelar</button>
+  </div>
+</div>
+
+<!-- ─── MODAL: PHOTO ─── -->
+<div class="modal-overlay" id="photoModal" onclick="closeModal('photoModal')">
+  <div class="modal" onclick="e=>e.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📸 Foto del bebé</div>
+    <div class="photo-btns">
+      <div class="photo-btn" onclick="document.getElementById('photoAwakeInput2').click()">
+        <div class="photo-btn-icon">😊</div>
+        <div class="photo-btn-text">Foto despierto</div>
+      </div>
+      <div class="photo-btn" onclick="document.getElementById('photoSleepInput2').click()">
+        <div class="photo-btn-icon">😴</div>
+        <div class="photo-btn-text">Foto dormido</div>
+      </div>
+    </div>
+    <input type="file" id="photoAwakeInput2" accept="image/*" onchange="handlePhoto('awake', this)">
+    <input type="file" id="photoSleepInput2" accept="image/*" onchange="handlePhoto('sleep', this)">
+    <button class="btn-sm btn-secondary btn-full mt-8" onclick="closeModal('photoModal')">Cerrar</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════════
+const DB_KEY = 'suenitos_v2';
+const SETTINGS_KEY = 'suenitos_settings';
+
+function loadData() {
+  try { return JSON.parse(localStorage.getItem(DB_KEY)) || []; } catch { return []; }
+}
+function saveData(d) { localStorage.setItem(DB_KEY, JSON.stringify(d)); }
+function loadSettings() {
+  const def = { babyName:'Mi Bebé', darkMode:false, themeColor:'default', photoAwake:'', photoSleep:'', nightStart:'20:00', nightEnd:'07:00', alertLong:true };
+  try { return Object.assign(def, JSON.parse(localStorage.getItem(SETTINGS_KEY))||{}); } catch { return def; }
+}
+function saveSettings(s) { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); }
+
+let data = loadData();
+let settings = loadSettings();
+
+// ═══════════════════════════════════════════════════════
+//  TIMER STATE
+// ═══════════════════════════════════════════════════════
+let isSleeping = false;
+let sleepStart = null;
+let timerInterval = null;
+let editingId = null;
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+function init() {
+  applySettings();
+  generateStars();
+  updateBabyCard();
+  updateTimerUI();
+  updateTodayStats();
+  renderTodaySleeps();
+  renderWeekChart();
+  renderStatsContent('week');
+  renderHistory();
+}
+
+// ═══════════════════════════════════════════════════════
+//  SLEEP TOGGLE
+// ═══════════════════════════════════════════════════════
+function toggleSleep() {
+  if (!isSleeping) {
+    isSleeping = true;
+    sleepStart = new Date();
+    startTimer();
+    updateBabyCard();
+    updateTimerUI();
+    showToast('😴 Dulces sueños, ' + settings.babyName + '!');
+  } else {
+    stopSleep();
+  }
+}
+
+function stopSleep() {
+  if (!isSleeping) return;
+  const end = new Date();
+  isSleeping = false;
+  clearInterval(timerInterval);
+
+  const entry = {
+    id: Date.now(),
+    start: sleepStart.toISOString(),
+    end: end.toISOString(),
+    duration: end - sleepStart
+  };
+  data.push(entry);
+  saveData(data);
+  sleepStart = null;
+
+  updateBabyCard();
+  updateTimerUI();
+  updateTodayStats();
+  renderTodaySleeps();
+  renderWeekChart();
+  renderStatsContent(currentStatTab);
+  renderHistory();
+  showToast('✅ Guardado: ' + formatDuration(entry.duration));
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    const elapsed = new Date() - sleepStart;
+    document.getElementById('timerDisplay').textContent = formatTimer(elapsed);
+  }, 1000);
+}
+
+// ═══════════════════════════════════════════════════════
+//  FORMAT HELPERS
+// ═══════════════════════════════════════════════════════
+function formatTimer(ms) {
+  const s = Math.floor(ms/1000), m = Math.floor(s/60), h = Math.floor(m/60);
+  return `${pad(h)}:${pad(m%60)}:${pad(s%60)}`;
+}
+
+function formatDuration(ms) {
+  const totalMin = Math.floor(ms/60000);
+  const h = Math.floor(totalMin/60), m = totalMin%60;
+  if (h === 0) return m + ' min';
+  if (m === 0) return h + ' h';
+  return h + 'h ' + m + 'm';
+}
+
+function pad(n) { return String(n).padStart(2,'0'); }
+
+function formatTime(iso) {
+  const d = new Date(iso);
+  return d.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+}
+function formatDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('es',{weekday:'long',day:'numeric',month:'long'});
+}
+function toLocalDateStr(d) { // YYYY-MM-DD
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+}
+
+function isNight(startIso) {
+  const d = new Date(startIso);
+  const h = d.getHours(), m = d.getMinutes();
+  const [nSH, nSM] = settings.nightStart.split(':').map(Number);
+  const [nEH, nEM] = settings.nightEnd.split(':').map(Number);
+  const mins = h*60+m, nightS = nSH*60+nSM, nightE = nEH*60+nEM;
+  if (nightS > nightE) return mins >= nightS || mins < nightE;
+  return mins >= nightS && mins < nightE;
+}
+
+// ═══════════════════════════════════════════════════════
+//  UI UPDATE
+// ═══════════════════════════════════════════════════════
+function updateBabyCard() {
+  const nameEl = document.getElementById('babyNameDisplay');
+  const statusEl = document.getElementById('babyStatusText');
+  const badge = document.getElementById('statusBadge');
+  const zzz = document.getElementById('zzzContainer');
+  const imgAwake = document.getElementById('babyPhotoAwake');
+  const imgSleep = document.getElementById('babyPhotoSleep');
+  const placeholder = document.getElementById('babyPlaceholder');
+
+  nameEl.textContent = settings.babyName;
+
+  if (isSleeping) {
+    statusEl.textContent = 'Dormidito... 💜';
+    badge.textContent = '😴';
+    zzz.style.display = 'block';
+    if (settings.photoSleep) {
+      imgSleep.src = settings.photoSleep; imgSleep.style.display='block';
+      imgAwake.style.display='none'; placeholder.style.display='none';
+    } else if (settings.photoAwake) {
+      imgAwake.src = settings.photoAwake; imgAwake.style.display='block';
+      imgSleep.style.display='none'; placeholder.style.display='none';
+    } else {
+      placeholder.style.display='flex'; placeholder.textContent='😴';
+      imgAwake.style.display='none'; imgSleep.style.display='none';
+    }
+  } else {
+    statusEl.textContent = '¡Despierto y activo! 🌞';
+    badge.textContent = '😊';
+    zzz.style.display = 'none';
+    if (settings.photoAwake) {
+      imgAwake.src = settings.photoAwake; imgAwake.style.display='block';
+      imgSleep.style.display='none'; placeholder.style.display='none';
+    } else {
+      placeholder.style.display='flex'; placeholder.textContent='👶';
+      imgAwake.style.display='none'; imgSleep.style.display='none';
+    }
+  }
+}
+
+function updateTimerUI() {
+  const btn = document.getElementById('mainBtn');
+  const label = document.getElementById('timerLabel');
+  const sub = document.getElementById('timerSub');
+  const disp = document.getElementById('timerDisplay');
+
+  if (isSleeping) {
+    btn.className = 'btn-main btn-stop';
+    btn.textContent = '⏰ Registrar despertar';
+    label.textContent = 'Durmiendo hace';
+    sub.textContent = 'Iniciado a las ' + formatTime(sleepStart.toISOString());
+    disp.className = 'timer-time sleeping';
+  } else {
+    btn.className = 'btn-main btn-start btn-pulse';
+    btn.textContent = '😴 Inicia sueño';
+    label.textContent = 'Último sueño';
+    disp.className = 'timer-time';
+    disp.textContent = '00:00:00';
+
+    const today = todayEntries();
+    if (today.length > 0) {
+      const last = today[today.length-1];
+      disp.textContent = formatTimer(last.duration);
+      sub.textContent = formatTime(last.start)+' → '+formatTime(last.end);
+    } else {
+      sub.textContent = 'Toca el botón para iniciar';
+    }
+  }
+}
+
+function todayEntries() {
+  const today = toLocalDateStr(new Date());
+  return data.filter(e => toLocalDateStr(new Date(e.start)) === today);
+}
+
+function updateTodayStats() {
+  const entries = todayEntries();
+  const total = entries.reduce((a,e) => a+e.duration, 0);
+  const night = entries.filter(e=>isNight(e.start)).reduce((a,e)=>a+e.duration,0);
+  const day = total - night;
+
+  document.getElementById('statTotalToday').textContent = formatDuration(total);
+  document.getElementById('statWakeupsToday').textContent = entries.length;
+  document.getElementById('statNightToday').textContent = formatDuration(night);
+  document.getElementById('statDayToday').textContent = formatDuration(day);
+}
+
+function renderTodaySleeps() {
+  const container = document.getElementById('todaySleepList');
+  const entries = todayEntries().slice().reverse();
+  if (entries.length === 0) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">🌛</div><div class="empty-text">Sin registros hoy todavía</div></div>`;
+    return;
+  }
+  container.innerHTML = entries.map(e => `
+    <div class="sleep-item">
+      <div class="sleep-icon">${isNight(e.start)?'🌙':'☀️'}</div>
+      <div class="sleep-info">
+        <div class="sleep-time">${formatTime(e.start)} → ${formatTime(e.end)}</div>
+        <div class="sleep-duration">${formatDuration(e.duration)}</div>
+      </div>
+      <div class="sleep-actions">
+        <span class="sleep-tag ${isNight(e.start)?'tag-night':'tag-day'}">${isNight(e.start)?'Noche':'Día'}</span>
+        <button class="action-btn" onclick="openEdit(${e.id})">✏️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+//  STATS
+// ═══════════════════════════════════════════════════════
+let currentStatTab = 'week';
+
+function setStatTab(tab, el) {
+  currentStatTab = tab;
+  document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderStatsContent(tab);
+}
+
+function renderStatsContent(tab) {
+  const container = document.getElementById('statsContent');
+  const now = new Date();
+  let entries;
+
+  if (tab === 'week') {
+    const start = new Date(now); start.setDate(now.getDate() - now.getDay()); start.setHours(0,0,0,0);
+    entries = data.filter(e => new Date(e.start) >= start);
+  } else {
+    entries = data.filter(e => {
+      const d = new Date(e.start);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    });
+  }
+
+  if (entries.length === 0) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Sin datos para este período</div></div>`;
+    return;
+  }
+
+  const total = entries.reduce((a,e)=>a+e.duration,0);
+  const days = new Set(entries.map(e=>toLocalDateStr(new Date(e.start)))).size || 1;
+  const avg = total/days;
+  const night = entries.filter(e=>isNight(e.start)).reduce((a,e)=>a+e.duration,0);
+  const day = total - night;
+  const longest = Math.max(...entries.map(e=>e.duration));
+
+  container.innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-value">${formatDuration(avg)}</div>
+        <div class="stat-label">Prom. diario</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-value">${formatDuration(longest)}</div>
+        <div class="stat-label">Siesta más larga</div>
+      </div>
+      <div class="stat-card night-card">
+        <div class="stat-icon">🌙</div>
+        <div class="stat-value">${formatDuration(night)}</div>
+        <div class="stat-label">Total nocturno</div>
+      </div>
+      <div class="stat-card day-card">
+        <div class="stat-icon">☀️</div>
+        <div class="stat-value">${formatDuration(day)}</div>
+        <div class="stat-label">Total diurno</div>
+      </div>
+    </div>
+    <div style="background:var(--card);border-radius:var(--radius-sm);padding:16px;box-shadow:0 2px 12px var(--shadow);margin-top:10px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:13px;font-weight:700;color:var(--text2);">Total acumulado</span>
+        <span style="font-size:13px;font-weight:900;color:var(--accent);">${formatDuration(total)}</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width:${Math.min(100,total/3600000/14*100)}%;background:linear-gradient(90deg,var(--accent),var(--accent2));"></div>
+      </div>
+      <div style="font-size:11px;color:var(--text2);margin-top:4px;">${entries.length} registros · ${days} días</div>
+    </div>
+  `;
+}
+
+function renderWeekChart() {
+  const container = document.getElementById('weekChart');
+  const now = new Date();
+  const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const bars = [];
+
+  for (let i=6; i>=0; i--) {
+    const d = new Date(now); d.setDate(now.getDate()-i); d.setHours(0,0,0,0);
+    const dayStr = toLocalDateStr(d);
+    const entries = data.filter(e=>toLocalDateStr(new Date(e.start))===dayStr);
+    const total = entries.reduce((a,e)=>a+e.duration,0);
+    bars.push({ label: days[d.getDay()], total, isToday: i===0 });
+  }
+
+  const max = Math.max(...bars.map(b=>b.total), 3600000);
+
+  container.innerHTML = bars.map(b => {
+    const pct = Math.max(4, (b.total/max)*100);
+    return `
+      <div class="week-bar-wrap">
+        <div class="week-bar-outer" style="height:${Math.round((b.total/max)*60+4)}px; min-height:4px;">
+          <div class="week-bar" style="height:${pct}%;min-height:4px;opacity:${b.isToday?1:0.7};"></div>
+        </div>
+        <div class="week-day" style="color:${b.isToday?'var(--accent)':'var(--text2)'};font-weight:${b.isToday?900:700}">${b.label}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+//  HISTORY
+// ═══════════════════════════════════════════════════════
+function renderHistory() {
+  const container = document.getElementById('historyList');
+  if (data.length === 0) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">El historial está vacío</div></div>`;
+    return;
+  }
+
+  const grouped = {};
+  data.forEach(e => {
+    const key = toLocalDateStr(new Date(e.start));
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(e);
+  });
+
+  const sortedDays = Object.keys(grouped).sort((a,b)=>b.localeCompare(a));
+
+  container.innerHTML = sortedDays.map(day => {
+    const entries = grouped[day];
+    const total = entries.reduce((a,e)=>a+e.duration,0);
+    const night = entries.filter(e=>isNight(e.start)).reduce((a,e)=>a+e.duration,0);
+    const dayD = new Date(day+'T12:00:00');
+    const dateStr = dayD.toLocaleDateString('es',{weekday:'long',day:'numeric',month:'long'});
+
+    const itemsHtml = entries.slice().reverse().map(e=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">
+        <span style="font-size:18px;">${isNight(e.start)?'🌙':'☀️'}</span>
+        <div style="flex:1;">
+          <div style="font-size:12px;color:var(--text2);font-weight:700;">${formatTime(e.start)} → ${formatTime(e.end)}</div>
+          <div style="font-size:15px;font-weight:900;">${formatDuration(e.duration)}</div>
+        </div>
+        <button class="action-btn" onclick="openEdit(${e.id})">✏️</button>
+      </div>
+    `).join('');
+
+    return `
+      <div class="history-day">
+        <div class="history-day-header" onclick="toggleHistoryDay('hd-${day}')">
+          <div>
+            <div class="history-day-date">${dateStr}</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:2px;">${entries.length} siesta${entries.length!==1?'s':''} · 🌙${formatDuration(night)} · ☀️${formatDuration(total-night)}</div>
+          </div>
+          <div class="history-day-total">${formatDuration(total)}</div>
+        </div>
+        <div class="history-day-body" id="hd-${day}">
+          <div style="padding-top:8px;">${itemsHtml}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function toggleHistoryDay(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+
+// ═══════════════════════════════════════════════════════
+//  EDIT
+// ═══════════════════════════════════════════════════════
+function openEdit(id) {
+  editingId = id;
+  const entry = data.find(e=>e.id===id);
+  if (!entry) return;
+
+  const toLocal = iso => {
+    const d = new Date(iso);
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().slice(0,16);
+  };
+
+  document.getElementById('editStart').value = toLocal(entry.start);
+  document.getElementById('editEnd').value = toLocal(entry.end);
+  openModal('editModal');
+}
+
+function saveEdit() {
+  const entry = data.find(e=>e.id===editingId);
+  if (!entry) return;
+  const start = new Date(document.getElementById('editStart').value);
+  const end = new Date(document.getElementById('editEnd').value);
+  if (isNaN(start)||isNaN(end)||end<=start) { showToast('❌ Revisa las horas'); return; }
+  entry.start = start.toISOString();
+  entry.end = end.toISOString();
+  entry.duration = end - start;
+  saveData(data);
+  closeModal('editModal');
+  updateTodayStats();
+  renderTodaySleeps();
+  renderWeekChart();
+  renderStatsContent(currentStatTab);
+  renderHistory();
+  updateTimerUI();
+  showToast('✅ ¡Guardado!');
+}
+
+function deleteEntry() {
+  data = data.filter(e=>e.id!==editingId);
+  saveData(data);
+  closeModal('editModal');
+  updateTodayStats();
+  renderTodaySleeps();
+  renderWeekChart();
+  renderStatsContent(currentStatTab);
+  renderHistory();
+  updateTimerUI();
+  showToast('🗑️ Eliminado');
+}
+
+// ═══════════════════════════════════════════════════════
+//  SETTINGS
+// ═══════════════════════════════════════════════════════
+function openSettings() {
+  document.getElementById('settingName').value = settings.babyName;
+  document.getElementById('settingNightStart').value = settings.nightStart || '20:00';
+  document.getElementById('settingNightEnd').value = settings.nightEnd || '07:00';
+  document.getElementById('darkToggle').className = 'toggle' + (settings.darkMode?' on':'');
+
+  if (settings.photoAwake) {
+    const p = document.getElementById('previewAwake');
+    p.src = settings.photoAwake; p.style.display='block';
+  }
+  if (settings.photoSleep) {
+    const p = document.getElementById('previewSleep');
+    p.src = settings.photoSleep; p.style.display='block';
+  }
+
+  // Mark active swatch
+  document.querySelectorAll('.swatch').forEach(s => {
+    s.classList.toggle('active', s.dataset.color === (settings.themeColor||'default'));
+  });
+
+  openModal('settingsModal');
+}
+
+function saveSetting(key, value) {
+  settings[key] = value;
+  saveSettings(settings);
+  if (key==='babyName') updateBabyCard();
+  if (key.startsWith('night')) { updateTodayStats(); renderTodaySleeps(); }
+}
+
+function toggleDarkMode() {
+  settings.darkMode = !settings.darkMode;
+  document.getElementById('darkToggle').className = 'toggle' + (settings.darkMode?' on':'');
+  applyTheme();
+  saveSettings(settings);
+}
+
+function toggleSetting(key, toggleId) {
+  settings[key] = !settings[key];
+  document.getElementById(toggleId).className = 'toggle' + (settings[key]?' on':'');
+  saveSettings(settings);
+}
+
+function setThemeColor(color, el) {
+  settings.themeColor = color;
+  saveSettings(settings);
+  document.querySelectorAll('.swatch').forEach(s => s.classList.toggle('active', s.dataset.color===color));
+  applyTheme();
+}
+
+function applySettings() {
+  applyTheme();
+  document.getElementById('settingName').value = settings.babyName;
+}
+
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', settings.darkMode?'dark':'light');
+  document.documentElement.setAttribute('data-theme-color', settings.themeColor||'default');
+}
+
+// ═══════════════════════════════════════════════════════
+//  PHOTOS
+// ═══════════════════════════════════════════════════════
+function openPhotoModal() {
+  openModal('photoModal');
+}
+
+function handlePhoto(type, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const src = e.target.result;
+    if (type==='awake') {
+      settings.photoAwake = src;
+      const p1 = document.getElementById('previewAwake'); p1.src=src; p1.style.display='block';
+    } else {
+      settings.photoSleep = src;
+      const p2 = document.getElementById('previewSleep'); p2.src=src; p2.style.display='block';
+    }
+    saveSettings(settings);
+    updateBabyCard();
+    showToast('📸 ¡Foto guardada!');
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+}
+
+// ═══════════════════════════════════════════════════════
+//  EXPORT
+// ═══════════════════════════════════════════════════════
+function openExportModal() { openModal('exportModal'); }
+
+function exportData() {
+  const period = document.getElementById('exportPeriod').value;
+  const now = new Date();
+  let entries = data;
+
+  if (period==='week') {
+    const start = new Date(now); start.setDate(now.getDate()-7); start.setHours(0,0,0,0);
+    entries = data.filter(e=>new Date(e.start)>=start);
+  } else if (period==='month') {
+    entries = data.filter(e=>{ const d=new Date(e.start); return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear(); });
+  }
+
+  if (entries.length===0) { showToast('Sin datos para este período'); return; }
+
+  // Build CSV
+  let csv = `Reporte de sueño - ${settings.babyName}\nGenerado: ${now.toLocaleString('es')}\n\n`;
+  csv += `Fecha,Inicio,Fin,Duración,Tipo\n`;
+  entries.slice().sort((a,b)=>new Date(a.start)-new Date(b.start)).forEach(e=>{
+    const d = new Date(e.start);
+    csv += `${toLocalDateStr(d)},${formatTime(e.start)},${formatTime(e.end)},${formatDuration(e.duration)},${isNight(e.start)?'Nocturno':'Diurno'}\n`;
+  });
+
+  const total = entries.reduce((a,e)=>a+e.duration,0);
+  csv += `\nTotal: ${formatDuration(total)}\nRegistros: ${entries.length}\n`;
+
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=`suenitos_${settings.babyName}_${toLocalDateStr(now)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+
+  closeModal('exportModal');
+  showToast('📥 ¡Archivo descargado!');
+}
+
+// ═══════════════════════════════════════════════════════
+//  MODALS / PAGES
+// ═══════════════════════════════════════════════════════
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function setPage(page, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  el.classList.add('active');
+  if (page==='stats') { renderWeekChart(); renderStatsContent(currentStatTab); }
+  if (page==='history') renderHistory();
+}
+
+// ═══════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════
+let toastTimeout;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+// ═══════════════════════════════════════════════════════
+//  STARS
+// ═══════════════════════════════════════════════════════
+function generateStars() {
+  const container = document.getElementById('stars');
+  for (let i=0; i<60; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random()*3+1;
+    s.style.cssText = `width:${size}px;height:${size}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*3}s;`;
+    container.appendChild(s);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  RUN
+// ═══════════════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>
