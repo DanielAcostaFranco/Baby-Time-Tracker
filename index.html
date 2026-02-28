@@ -190,6 +190,25 @@
   .timer-time.sleeping { color: var(--night); }
   .timer-sub { font-size: 12px; color: var(--text2); margin-top: 4px; font-weight: 600; }
 
+  .awake-timer {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--bg2); border-radius: 100px;
+    padding: 8px 18px; margin-top: 12px;
+    border: 1.5px solid var(--border);
+    animation: slideUp 0.3s ease;
+  }
+  .awake-timer-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent2); flex-shrink: 0;
+    animation: pulse-dot 1.5s infinite;
+  }
+  @keyframes pulse-dot {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+  .awake-timer-label { font-size: 12px; font-weight: 800; color: var(--text2); }
+  .awake-timer-time { font-size: 15px; font-weight: 900; color: var(--text); letter-spacing: -0.5px; }
+
   .btn-main {
     display: block; width: 100%; margin-top: 16px; padding: 18px;
     border: none; border-radius: var(--radius); cursor: pointer;
@@ -467,6 +486,11 @@
         <div class="timer-label" id="timerLabel">Tiempo dormido</div>
         <div class="timer-time" id="timerDisplay">00:00:00</div>
         <div class="timer-sub" id="timerSub">Toca el botón para iniciar</div>
+      </div>
+      <div class="awake-timer" id="awakeTimerBar" style="display:none;">
+        <div class="awake-timer-dot"></div>
+        <span class="awake-timer-label">☀️ Despierto hace</span>
+        <span class="awake-timer-time" id="awakeTimerDisplay">00:00:00</span>
       </div>
       <button class="btn-main btn-start btn-pulse" id="mainBtn" onclick="toggleSleep()">
         😴 Inicia sueño
@@ -747,6 +771,8 @@ let settings = loadSettings();
 let isSleeping = false;
 let sleepStart = null;
 let timerInterval = null;
+let awakeStart = null;
+let awakeInterval = null;
 let editingId = null;
 
 // ═══════════════════════════════════════════════════════
@@ -769,8 +795,10 @@ function init() {
 // ═══════════════════════════════════════════════════════
 function toggleSleep() {
   if (!isSleeping) {
+    // Baby falling asleep — stop awake timer, start sleep timer
     isSleeping = true;
     sleepStart = new Date();
+    stopAwakeTimer();
     startTimer();
     updateBabyCard();
     updateTimerUI();
@@ -796,6 +824,9 @@ function stopSleep() {
   saveData(data);
   sleepStart = null;
 
+  // Start awake timer from this moment
+  startAwakeTimer();
+
   updateBabyCard();
   updateTimerUI();
   updateTodayStats();
@@ -812,6 +843,23 @@ function startTimer() {
     const elapsed = new Date() - sleepStart;
     document.getElementById('timerDisplay').textContent = formatTimer(elapsed);
   }, 1000);
+}
+
+function startAwakeTimer() {
+  awakeStart = new Date();
+  document.getElementById('awakeTimerBar').style.display = 'flex';
+  document.getElementById('awakeTimerDisplay').textContent = '00:00:00';
+  clearInterval(awakeInterval);
+  awakeInterval = setInterval(() => {
+    const elapsed = new Date() - awakeStart;
+    document.getElementById('awakeTimerDisplay').textContent = formatTimer(elapsed);
+  }, 1000);
+}
+
+function stopAwakeTimer() {
+  clearInterval(awakeInterval);
+  awakeStart = null;
+  document.getElementById('awakeTimerBar').style.display = 'none';
 }
 
 // ═══════════════════════════════════════════════════════
